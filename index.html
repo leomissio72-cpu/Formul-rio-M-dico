@@ -9,7 +9,7 @@
       font-family: Arial, sans-serif; 
       background: #f8f9fa; 
       display: flex;
-      flex-direction: column; /* <<< faz tudo ficar um embaixo do outro */
+      flex-direction: column;
       align-items: center; 
       min-height: 100vh;
       margin: 0;
@@ -24,7 +24,7 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1); 
       width: 100%;
       max-width: 400px;
-      margin-top: 20px; /* espaço entre formulários se tiver mais de um */
+      margin-top: 20px;
     }
 
     label { 
@@ -82,11 +82,8 @@
     <label>Especialidade Encaminhada:</label>
     <select name="especialidade" required>
       <option value="">Selecione</option>
-      <option>Cardiologia</option>
-      <option>Dermatologia</option>
-      <option>Ortopedia</option>
-      <option>Neurologia</option>
-      <option>Outros</option>
+      <option>Mastologia</option>
+      <option>OCR</option>
     </select>
 
     <label>Retorno Programado (em meses):</label>
@@ -96,7 +93,7 @@
   </form>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwJIM8V8W2jFsgRBPohFW5I8y7HJtuoqrC8ZxWOdtZptzmkwc3T_-JNk8ftwdTjbEO-/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxvefovC1C1io-Hq8LP4g6ru9ApC0RkAzzn-34w1AqbVjlzCJgxXhe3stDzmjXnSU8A/exec";
     const form = document.getElementById("form");
 
     form.addEventListener("submit", e => {
