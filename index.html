@@ -8,12 +8,12 @@
     body { 
       font-family: Arial, sans-serif; 
       background: #f8f9fa; 
-      display: flex;
+      display: flex; /* Mantido para centralizar o formulário na página */
       justify-content: center; 
-      align-items: center; 
+      align-items: flex-start; /* Alinha o formulário ao topo da visualização, melhor em telas pequenas */
       min-height: 100vh;
       margin: 0;
-      padding: 20px;
+      padding: 20px 0; /* Adiciona padding vertical */
       box-sizing: border-box;
     }
     form { 
@@ -23,25 +23,31 @@
       box-shadow: 0 0 10px rgba(0,0,0,0.1); 
       width: 100%;
       max-width: 400px;
-      display: flex;
-      flex-direction: column; /* CHAVE DA CORREÇÃO: Coloca os itens em coluna */
-      gap: 15px;
+      margin-top: 20px;
     }
-    h2 { text-align: center; color: #000; margin-bottom: 10px; }
-    label { display: block; font-weight: bold; }
+    /* ESTILO CRUCIAL PARA FORÇAR VERTICAL */
+    label { 
+      display: block; /* Garante que o label ocupe uma linha inteira */
+      margin-top: 15px; /* Espaçamento entre os campos */
+      font-weight: bold; 
+    }
     input, select, button { 
+      display: block; /* Garante que o input ocupe uma linha inteira */
       width: 100%; 
       padding: 10px; 
+      margin-top: 5px; 
       border: 1px solid #ccc; 
       border-radius: 5px; 
       box-sizing: border-box;
     }
+    h2 { text-align: center; color: #000; margin-bottom: 20px; }
+    
     button { 
       background: #007bff; 
       color: white; 
       border: none; 
       cursor: pointer; 
-      margin-top: 5px; 
+      margin-top: 25px; /* Mais espaço antes do botão */
     }
     button:hover { background: #0056b3; }
   </style>
