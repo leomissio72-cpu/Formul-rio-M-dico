@@ -93,7 +93,7 @@
   </form>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxvefovC1C1io-Hq8LP4g6ru9ApC0RkAzzn-34w1AqbVjlzCJgxXhe3stDzmjXnSU8A/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxNxo0uZNhKprGkwBPZrw0QMny7pLcGvV4KU9lydQXrQzlnyb14W3zwUml653dJWo8-/exec";
     const form = document.getElementById("form");
 
     form.addEventListener("submit", e => {
@@ -103,11 +103,13 @@
 
       fetch(scriptURL, { method: "POST", body: formData })
         .then(() => {
-          alert("Enviado com sucesso!");
+          alert("✅ Enviado com sucesso!");
           form.reset();
         })
-        .catch(() => alert("Erro ao enviar!"));
+        .catch(() => alert("❌ Erro ao enviar! Verifique a planilha e o script."));
     });
   </script>
 </body>
 </html>
+
+
