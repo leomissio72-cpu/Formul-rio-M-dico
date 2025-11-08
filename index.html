@@ -11,6 +11,7 @@
       display: flex;
       flex-direction: column;
       align-items: center; 
+      justify-content: center;
       min-height: 100vh;
       margin: 0;
       padding: 20px;
@@ -23,11 +24,10 @@
       box-shadow: 0 0 12px rgba(0,0,0,0.1); 
       width: 100%;
       max-width: 420px;
-      margin-top: 40px;
+      text-align: center;
     }
 
     h2 { 
-      text-align: center; 
       color: #333; 
       margin-bottom: 20px; 
     }
@@ -36,6 +36,7 @@
       display: block;
       margin-top: 15px;
       font-weight: bold;
+      text-align: left;
     }
 
     input, select, button { 
@@ -60,10 +61,15 @@
 
     #logoutBtn {
       background: #dc3545;
+      width: 100px;
     }
 
     #logoutBtn:hover {
       background: #b02a37;
+    }
+
+    #formulario {
+      display: none;
     }
   </style>
 
@@ -85,14 +91,16 @@
   </script>
 </head>
 <body>
-  <!-- Login -->
+
+  <!-- Tela de Login -->
   <div class="container" id="login">
-    <h2>Entrar no Sistema</h2>
+    <h2>Bem-vindo</h2>
+    <p>Entre com sua conta Google para acessar o sistema</p>
     <button onclick="loginGoogle()">🔐 Entrar com Google</button>
   </div>
 
   <!-- Formulário -->
-  <div class="container" id="formulario" style="display:none;">
+  <div class="container" id="formulario">
     <button id="logoutBtn" onclick="logout()">Sair</button>
     <h2>Formulário Médico</h2>
 
@@ -127,7 +135,7 @@
   </div>
 
   <script>
-    // === Seu link do Apps Script ===
+    // === Link do seu Apps Script ===
     const scriptURL = "https://script.google.com/macros/s/AKfycbylCR0e_p7VKhJYRxzT56kMnltH7SPqbo4ZMXPsBumLxkd3uTUlWxFrG64s2cMCmChx/exec";
     const form = document.getElementById("form");
 
@@ -155,7 +163,7 @@
       }
     });
 
-    // === Envio para planilha ===
+    // === Envio dos dados ===
     form.addEventListener("submit", e => {
       e.preventDefault();
       const formData = new FormData(form);
@@ -169,5 +177,6 @@
         .catch(() => alert("❌ Erro ao enviar! Verifique a planilha e o script."));
     });
   </script>
+
 </body>
 </html>
