@@ -1,4 +1,4 @@
-.<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -7,24 +7,29 @@
   <style>
     body { 
       font-family: Arial, sans-serif; 
-      background: #f8f9fa; 
+      background: #f0f2f5; 
       display: flex;
       flex-direction: column;
       align-items: center; 
       min-height: 100vh;
       margin: 0;
       padding: 20px;
-      box-sizing: border-box;
     }
 
-    form { 
+    .container {
       background: white; 
       padding: 30px; 
-      border-radius: 10px; 
-      box-shadow: 0 0 10px rgba(0,0,0,0.1); 
+      border-radius: 12px; 
+      box-shadow: 0 0 12px rgba(0,0,0,0.1); 
       width: 100%;
-      max-width: 400px;
-      margin-top: 20px;
+      max-width: 420px;
+      margin-top: 40px;
+    }
+
+    h2 { 
+      text-align: center; 
+      color: #333; 
+      margin-bottom: 20px; 
     }
 
     label { 
@@ -34,7 +39,6 @@
     }
 
     input, select, button { 
-      display: block;
       width: 100%; 
       padding: 10px; 
       margin-top: 5px; 
@@ -43,59 +47,115 @@
       box-sizing: border-box;
     }
 
-    h2 { 
-      text-align: center; 
-      color: #000; 
-      margin-bottom: 20px; 
-    }
-
     button { 
       background: #007bff; 
       color: white; 
       border: none; 
       cursor: pointer; 
       margin-top: 25px;
+      transition: 0.3s;
     }
 
     button:hover { background: #0056b3; }
+
+    #logoutBtn {
+      background: #dc3545;
+    }
+
+    #logoutBtn:hover {
+      background: #b02a37;
+    }
   </style>
-</head>
-<body>
-  <form id="form">
-    <h2>Formulário Médico</h2>
 
-    <label>Nome do Médico:</label>
-    <input type="text" name="nomeMedico" required>
-
-    <label>Nome do Paciente:</label>
-    <input type="text" name="nomePaciente" required>
-
-    <label>CPF do Paciente:</label>
-    <input type="text" name="cpfPaciente" required>
-
-    <label>Data de Nascimento:</label>
-    <input type="date" name="dataNascimento" required>
-
-    <label>Data da Alta:</label>
-    <input type="date" name="dataAlta" required>
-
-    <label>Especialidade Encaminhada:</label>
-    <select name="especialidade" required>
-      <option value="">Selecione</option>
-      <option>Mastologia</option>
-      <option>OCR</option>
-    </select>
-
-    <label>Retorno Programado (em meses):</label>
-    <input type="number" name="retornoMeses" min="0" required>
-
-    <button type="submit">Enviar</button>
-  </form>
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxNxo0uZNhKprGkwBPZrw0QMny7pLcGvV4KU9lydQXrQzlnyb14W3zwUml653dJWo8-/exec";
+    const firebaseConfig = {
+      apiKey: "AIzaSyCznEr8M2lNu7nwCfGN_kcJZFM5lqRQdf8",
+      authDomain: "psico-17375.firebaseapp.com",
+      projectId: "psico-17375",
+      storageBucket: "psico-17375.appspot.com",
+      messagingSenderId: "405718265829",
+      appId: "1:405718265829:web:3e3974a0dc02080824890c",
+      measurementId: "G-P19R4LJJKS"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
+</head>
+<body>
+  <!-- Login -->
+  <div class="container" id="login">
+    <h2>Entrar no Sistema</h2>
+    <button onclick="loginGoogle()">🔐 Entrar com Google</button>
+  </div>
+
+  <!-- Formulário -->
+  <div class="container" id="formulario" style="display:none;">
+    <button id="logoutBtn" onclick="logout()">Sair</button>
+    <h2>Formulário Médico</h2>
+
+    <form id="form">
+      <label>Nome do Médico:</label>
+      <input type="text" name="nomeMedico" required>
+
+      <label>Nome do Paciente:</label>
+      <input type="text" name="nomePaciente" required>
+
+      <label>CPF do Paciente:</label>
+      <input type="text" name="cpfPaciente" required>
+
+      <label>Data de Nascimento:</label>
+      <input type="date" name="dataNascimento" required>
+
+      <label>Data da Alta:</label>
+      <input type="date" name="dataAlta" required>
+
+      <label>Especialidade Encaminhada:</label>
+      <select name="especialidade" required>
+        <option value="">Selecione</option>
+        <option>Mastologia</option>
+        <option>OCR</option>
+      </select>
+
+      <label>Retorno Programado (em meses):</label>
+      <input type="number" name="retornoMeses" min="0" required>
+
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+
+  <script>
+    // === Seu link do Apps Script ===
+    const scriptURL = "https://script.google.com/macros/s/AKfycbylCR0e_p7VKhJYRxzT56kMnltH7SPqbo4ZMXPsBumLxkd3uTUlWxFrG64s2cMCmChx/exec";
     const form = document.getElementById("form");
 
+    // === Firebase Auth ===
+    const auth = firebase.auth();
+
+    function loginGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(result => console.log("Logado como:", result.user.email))
+        .catch(error => alert("Erro ao logar: " + error.message));
+    }
+
+    function logout() {
+      auth.signOut();
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("formulario").style.display = "block";
+      } else {
+        document.getElementById("login").style.display = "block";
+        document.getElementById("formulario").style.display = "none";
+      }
+    });
+
+    // === Envio para planilha ===
     form.addEventListener("submit", e => {
       e.preventDefault();
       const formData = new FormData(form);
@@ -111,6 +171,3 @@
   </script>
 </body>
 </html>
-
-
-
