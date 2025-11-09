@@ -3,144 +3,1013 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Formulário Médico</title>
+  <title>Sistema Jurídico Local</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
   <style>
-    /* ... (Seu CSS completo aqui) ... */
-    body { 
-      font-family: Arial, sans-serif; 
-      background: #f0f2f5; 
-      display: flex;
-      flex-direction: column;
-      align-items: center; 
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
+    :root{
+      --bg:#f4f6fb;
+      --sidebar:#0f1724;
+      --card:#ffffff;
+      --muted:#556179;
+      --primary:#3366ff;
+      --accent:#2b61ff;
+      --success:#0ea44e;
+      --warning:#f59e0b;
+      --danger:#ef4444;
     }
-    /* ... (Resto do seu CSS) ... */
-    .container {
-      background: white; 
-      padding: 30px; 
-      border-radius: 12px; 
-      box-shadow: 0 0 12px rgba(0,0,0,0.1); 
-      width: 100%;
-      max-width: 420px;
-      text-align: center;
+    *{box-sizing:border-box}
+    body{margin:0;font-family:'Inter',sans-serif;background:var(--bg);color:#0b1b2b}
+    .app{display:flex;min-height:100vh}
+
+    /* SIDEBAR */
+    .sidebar{
+      width:220px;padding:20px;background:#0f1724;color:#fff;display:flex;flex-direction:column;gap:18px;
     }
-    /* ... (Resto do seu CSS) ... */
-    #formulario {
-      display: none;
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+    .brand h3{margin:0;font-size:16px}
+    nav{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+    .nav-btn{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;border:none;background:transparent;color:rgba(255,255,255,0.9);cursor:pointer;font-weight:600;text-align:left;width:100%}
+    .nav-btn:hover{background:rgba(255,255,255,0.04)}
+    .nav-btn.active{background:rgba(255,255,255,0.06)}
+    .sidebar-footer{margin-top:auto;color:var(--muted);font-size:13px}
+
+    /* WORKSPACE */
+    .workspace{flex:1;display:flex;flex-direction:column;min-width:0}
+    .topbar{height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:transparent;border-bottom:1px solid rgba(16,24,40,0.04)}
+    .page-title{font-size:18px;font-weight:700;color:#0b1b2b}
+    .user-area{display:flex;align-items:center;gap:12px}
+    .avatar{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--accent));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700}
+
+    .main-area{padding:18px;overflow:auto}
+    .container{background:var(--card);border-radius:12px;padding:18px;border:1px solid rgba(11,27,43,0.04);box-shadow:0 8px 24px rgba(11,27,43,0.04);margin-bottom:16px}
+    h2{margin:0 0 8px 0;color:#0b1b2b}
+
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .col-full{grid-column:1/-1}
+    label{display:block;margin-top:10px;color:var(--muted);font-weight:600;font-size:13px}
+    input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(11,27,43,0.06);background:#fff;color:#0b1b2b;font-family:'Inter',sans-serif;font-size:14px}
+    textarea{min-height:100px;resize:vertical}
+    .actions{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;border:none;cursor:pointer;font-weight:700;font-size:14px;transition:opacity 0.2s}
+    .btn:hover{opacity:0.9}
+    .btn.primary{background:linear-gradient(90deg,var(--primary),var(--accent));color:#fff}
+    .btn.ghost{background:transparent;border:1px solid rgba(11,27,43,0.06);color:#0b1b2b}
+    .btn.link{background:transparent;color:var(--muted);text-decoration:underline;padding:8px}
+    .btn.danger{background:var(--danger);color:#fff}
+
+    table{width:100%;border-collapse:collapse;margin-top:12px;color:#0b1b2b}
+    th,td{padding:10px;border-bottom:1px solid rgba(11,27,43,0.04);text-align:left;font-size:14px}
+    th{color:var(--muted);font-weight:700}
+    td .btn{padding:6px 10px;font-size:13px}
+    td select{padding:6px 8px;font-size:13px;border:1px solid rgba(11,27,43,0.1)}
+
+    .no-data{color:var(--muted);padding:18px;text-align:center}
+    .note-card{background:#fafbff;border-left:4px solid var(--primary);padding:12px;border-radius:8px;margin-bottom:10px}
+    .note-meta{font-size:13px;color:var(--muted);margin-bottom:6px}
+    .note-text{font-size:14px;color:#0b1b2b}
+
+    .alert{padding:12px 16px;border-radius:8px;margin-bottom:12px;font-size:14px}
+    .alert.success{background:#d1fae5;color:#065f46;border:1px solid #10b981}
+    .alert.error{background:#fee2e2;color:#991b1b;border:1px solid #ef4444}
+
+    .status-badge{
+      display:inline-block;padding:4px 8px;border-radius:6px;font-size:12px;font-weight:600;
+    }
+    .status-aguardando{background:#fef3c7;color:#92400e}
+    .status-andamento{background:#dbeafe;color:#1e40af}
+    .status-suspenso{background:#fed7aa;color:#9a3412}
+    .status-sentenca{background:#e9d5ff;color:#6b21a8}
+    .status-recurso{background:#fce7f3;color:#9f1239}
+    .status-arquivado{background:#e5e7eb;color:#374151}
+    .status-finalizado{background:#d1fae5;color:#065f46}
+
+    /* LOGIN MODAL (O CSS relacionado ao login foi mantido mas o elemento foi removido) */
+    .login-modal{
+      position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);
+      display:flex;align-items:center;justify-content:center;z-index:9999;
+    }
+    .login-card{
+      background:var(--card);border-radius:12px;padding:32px;max-width:400px;width:90%;
+      box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    }
+    .login-card h2{margin-top:0;text-align:center}
+    .login-card p{text-align:center;color:var(--muted);margin-bottom:24px}
+    .google-btn-wrapper{display:flex;justify-content:center;margin-top:16px}
+    .skip-login{text-align:center;margin-top:16px}
+    .skip-login button{background:transparent;border:none;color:var(--muted);
+      text-decoration:underline;cursor:pointer;font-size:14px}
+    .user-profile{display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px;
+      border-radius:8px;transition:background 0.2s}
+    .user-profile:hover{background:rgba(11,27,43,0.04)}
+    .user-profile img{width:40px;height:40px;border-radius:8px}
+    .user-dropdown{position:absolute;top:60px;right:20px;background:var(--card);
+      border-radius:8px;padding:8px;box-shadow:0 8px 24px rgba(11,27,43,0.1);
+      border:1px solid rgba(11,27,43,0.04);min-width:200px;display:none}
+    .user-dropdown.show{display:block}
+    .user-dropdown-item{padding:10px;cursor:pointer;border-radius:6px;
+      display:flex;align-items:center;gap:8px;transition:background 0.2s}
+    .user-dropdown-item:hover{background:rgba(11,27,43,0.04)}
+
+    @media (max-width:980px){
+      .grid{grid-template-columns:1fr}
+      .sidebar{width:64px}
+      .brand h3,.sidebar-footer{display:none}
+      .nav-btn .label{display:none}
     }
   </style>
-
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
-  <script>
-    // 🔑 CHAVE DO FIREBASE SERÁ SUBSTITUÍDA AQUI PELO GITHUB ACTION
-    const firebaseConfig = {
-      apiKey: "VARS_REPLACE_FIREBASE_API_KEY", 
-      authDomain: "psico-17375.firebaseapp.com",
-      projectId: "psico-17375",
-      storageBucket: "psico-17375.appspot.com",
-      messagingSenderId: "405718265829",
-      appId: "1:405718265829:web:3e3974a0dc02080824890c",
-      measurementId: "G-P19R4LJJKS"
-    };
-    firebase.initializeApp(firebaseConfig);
-  </script>
 </head>
 <body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">J</div>
+        <div>
+          <h3>Sistema Jurídico</h3>
+          <div style="font-size:12px;color:var(--muted)">Escritório</div>
+        </div>
+      </div>
 
-  <div class="container" id="login">
-    <h2>Bem-vindo</h2>
-    <p>Entre com sua conta Google para acessar o sistema</p>
-    <button onclick="loginGoogle()">🔐 Entrar com Google</button>
-  </div>
+      <nav>
+        <button class="nav-btn active" data-tab="cadastro">
+          <span class="material-icons">person_add</span>
+          <span class="label">Cadastro</span>
+        </button>
+        <button class="nav-btn" data-tab="lista">
+          <span class="material-icons">folder_open</span>
+          <span class="label">Processos</span>
+        </button>
+        <button class="nav-btn" data-tab="anotacoes">
+          <span class="material-icons">note_add</span>
+          <span class="label">Anotações</span>
+        </button>
+        <button class="nav-btn" data-tab="ferramentas">
+          <span class="material-icons">build</span>
+          <span class="label">Ferramentas</span>
+        </button>
+      </nav>
 
-  <div class="container" id="formulario">
-    <button id="logoutBtn" onclick="logout()">Sair</button>
-    <h2>Formulário Médico</h2>
+      <div class="sidebar-footer">
+        <div style="font-size:12px;margin-top:8px">
+          <strong>Armazenamento:</strong> Local
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px">
+          Os dados são salvos no navegador
+        </div>
+      </div>
+    </aside>
 
-    <form id="form">
-      <label>Nome do Médico:</label>
-      <input type="text" name="nomeMedico" required>
+    <div class="workspace">
+      <div class="topbar">
+        <div class="page-title" id="pageTitle">Cadastro</div>
+        <div class="user-area">
+          <div style="text-align:right">
+            <div style="font-weight:700">Sistema Local</div>
+            <div style="font-size:12px;color:var(--muted)">
+              Armazenamento do navegador
+            </div>
+          </div>
+          <div class="avatar">⚖️</div>
+        </div>
+        </div>
 
-      <label>Nome do Paciente:</label>
-      <input type="text" name="nomePaciente" required>
+      <main class="main-area">
+        <section id="cadastro" class="container tab" style="display:block">
+          <h2>Cadastro de Cliente & Processo</h2>
+          <div id="alertCadastro"></div>
+          <form id="formCadastro" style="margin-top:12px">
+            <div class="grid">
+              <div>
+                <label>Nome completo *</label>
+                <input name="nome" type="text" required placeholder="Ex: José da Silva">
 
-      <label>CPF do Paciente:</label>
-      <input type="text" name="cpfPaciente" required>
+                <label>CPF</label>
+                <input name="cpf" type="text" placeholder="000.000.000-00">
 
-      <label>Data de Nascimento:</label>
-      <input type="date" name="dataNascimento" required>
+                <label>RG</label>
+                <input name="rg" type="text" placeholder="">
+              </div>
 
-      <label>Data da Alta:</label>
-      <input type="date" name="dataAlta" required>
+              <div>
+                <label>Telefone / WhatsApp</label>
+                <input name="telefone" type="text" placeholder="(11) 9xxxx-xxxx">
 
-      <label>Especialidade Encaminhada:</label>
-      <select name="especialidade" required>
-        <option value="">Selecione</option>
-        <option>Mastologia</option>
-        <option>OCR</option>
-      </select>
+                <label>E-mail</label>
+                <input name="email" type="email" placeholder="exemplo@dominio.com">
 
-      <label>Retorno Programado (em meses):</label>
-      <input type="number" name="retornoMeses" min="0" required>
+                <label>Responsável (advogado)</label>
+                <input name="responsavel" type="text" placeholder="Adv. Fulano">
+              </div>
 
-      <button type="submit">Enviar</button>
-    </form>
+              <div class="col-full">
+                <label>Endereço</label>
+                <input name="endereco" type="text" placeholder="Rua, nº, bairro, cidade - UF">
+              </div>
+
+              <div>
+                <label>Categoria do processo</label>
+                <select name="categoria">
+                  <option value="">Selecione...</option>
+                  <option value="Cível">Cível</option>
+                  <option value="Trabalhista">Trabalhista</option>
+                  <option value="Penal">Penal</option>
+                  <option value="Família">Família</option>
+                  <option value="Consumidor">Consumidor</option>
+                  <option value="Tributário">Tributário</option>
+                  <option value="Administrativo">Administrativo</option>
+                  <option value="Previdenciário">Previdenciário</option>
+                  <option value="Outros">Outros</option>
+                </select>
+
+                <label>Número do processo</label>
+                <input name="numero" type="text" placeholder="0001234-56.2025.8.26.0000">
+              </div>
+
+              <div>
+                <label>Vara / Comarca</label>
+                <input name="vara" type="text" placeholder="Ex: 3ª Vara Cível de São Paulo">
+
+                <label>Parte Contrária</label>
+                <input name="parte" type="text" placeholder="Nome da parte contrária">
+              </div>
+
+              <div>
+                <label>Status do Processo</label>
+                <select name="status">
+                  <option value="Aguardando Distribuição">Aguardando Distribuição</option>
+                  <option value="Em Andamento">Em Andamento</option>
+                  <option value="Aguardando Decisão">Aguardando Decisão</option>
+                  <option value="Suspenso">Suspenso</option>
+                  <option value="Sentença Proferida">Sentença Proferida</option>
+                  <option value="Em Recurso">Em Recurso</option>
+                  <option value="Trânsito em Julgado">Trânsito em Julgado</option>
+                  <option value="Arquivado">Arquivado</option>
+                  <option value="Finalizado">Finalizado</option>
+                </select>
+
+                <label>Data de abertura</label>
+                <input name="dataAbertura" type="date">
+              </div>
+
+              <div>
+                <label>Valor da causa (R$)</label>
+                <input name="valor" type="number" step="0.01" placeholder="0.00">
+
+                <label>Honorários (R$)</label>
+                <input name="honorarios" type="number" step="0.01" placeholder="0.00">
+              </div>
+
+              <div>
+                <label>Forma de Pagamento</label>
+                <select name="formaPagamento" id="formaPagamento">
+                  <option value="">Selecione...</option>
+                  <option value="À Vista">À Vista</option>
+                  <option value="Parcelado">Parcelado</option>
+                  <option value="Sucumbência">Sucumbência</option>
+                  <option value="Êxito">Êxito (% sobre ganho)</option>
+                  <option value="Pro Bono">Pro Bono</option>
+                  <option value="Convênio">Convênio</option>
+                </select>
+
+                <label>Quantidade de Parcelas</label>
+                <input name="parcelas" type="number" min="1" placeholder="Ex: 12" id="parcelasInput">
+              </div>
+
+              <div class="col-full">
+                <label>Observações / Anotações</label>
+                <textarea name="observacoes" placeholder="Anotações importantes, prazos, lembretes..."></textarea>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn primary" type="submit">
+                <span class="material-icons">save</span> Salvar Processo
+              </button>
+              <button type="button" class="btn ghost" id="btnExportPdf">
+                <span class="material-icons">picture_as_pdf</span> Exportar PDF
+              </button>
+              <button type="button" class="btn link" id="btnLimparForm">
+                Limpar Formulário
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section id="lista" class="container tab" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+            <h2>Processos Registrados</h2>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <input id="searchInput" placeholder="Pesquisar..." style="padding:8px;border-radius:8px;border:1px solid rgba(11,27,43,0.06);min-width:200px">
+              <button class="btn ghost" id="btnRefresh">
+                <span class="material-icons">refresh</span> Atualizar
+              </button>
+              <button class="btn ghost" id="btnDownloadCsv">
+                <span class="material-icons">download</span> CSV
+              </button>
+              <button class="btn ghost" id="btnSortDate">
+                <span class="material-icons">sort</span> Data
+              </button>
+            </div>
+          </div>
+
+          <div id="tableWrapper" style="margin-top:12px;overflow-x:auto">
+            <div class="no-data">Carregando registros...</div>
+          </div>
+        </section>
+
+        <section id="anotacoes" class="container tab" style="display:none">
+          <h2>Anotações</h2>
+          <div id="alertAnotacoes"></div>
+
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+            <div style="flex:1;min-width:220px">
+              <label>Processo (selecionar)</label>
+              <select id="selectProcesso" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(11,27,43,0.06);background:#fff;color:#0b1b2b">
+                <option value="">--- selecione um processo ---</option>
+              </select>
+            </div>
+
+            <div style="flex:1;min-width:220px">
+              <label>Adicionar anotação</label>
+              <input id="inputAnotacao" placeholder="Digite a anotação..." style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(11,27,43,0.06);background:#fff;color:#0b1b2b">
+            </div>
+
+            <div style="display:flex;align-items:end">
+              <button class="btn primary" id="btnSalvarAnotacao">
+                <span class="material-icons">note_add</span> Salvar
+              </button>
+            </div>
+          </div>
+
+          <div id="listaAnotacoes"></div>
+        </section>
+
+        <section id="ferramentas" class="container tab" style="display:none">
+          <h2>Calculadora de Prazos Processuais</h2>
+          
+          <div class="grid" style="margin-top:12px">
+            <div>
+              <label>Data Inicial</label>
+              <input type="date" id="dataInicial">
+              
+              <label>Tipo de Prazo</label>
+              <select id="tipoPrazo">
+                <option value="corrido">Dias Corridos</option>
+                <option value="uteis">Dias Úteis</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Quantidade de Dias</label>
+              <input type="number" id="quantidadeDias" placeholder="Ex: 15" min="1">
+              
+              <label style="visibility:hidden">Espaço</label>
+              <button class="btn primary" id="btnCalcularPrazo" style="width:100%">
+                <span class="material-icons">calculate</span> Calcular
+              </button>
+            </div>
+
+            <div class="col-full" id="resultadoPrazo" style="display:none;background:#fafbff;padding:16px;border-radius:8px;border:2px solid var(--primary)">
+              <div style="font-weight:700;color:var(--primary);margin-bottom:8px">Resultado:</div>
+              <div id="resultadoTexto" style="font-size:16px;color:#0b1b2b"></div>
+            </div>
+          </div>
+
+          <hr style="margin:24px 0;border:none;border-top:1px solid rgba(11,27,43,0.06)">
+
+          <h2 style="margin-top:24px">Gerenciar Dados</h2>
+          <div style="margin-top:12px">
+            <button class="btn danger" id="btnLimparTodos">
+              <span class="material-icons">delete_forever</span> Limpar Todos os Dados
+            </button>
+            <p style="color:var(--muted);margin-top:8px;font-size:13px">
+              Atenção: Esta ação removerá todos os processos e anotações salvos. Não é possível desfazer.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
   </div>
 
   <script>
-    // 🔗 URL DO APPS SCRIPT SERÁ SUBSTITUÍDA AQUI PELO GITHUB ACTION
-    // ESTE É O NOVO PLACEHOLDER PARA A SUA NOVA URL:
-    const scriptURL = "VARS_REPLACE_GOOGLE_SCRIPT_URL"; 
-    const form = document.getElementById("form");
+    // ========== Variáveis e Funções de Login removidas ==========
+    // As funções e variáveis GOOGLE_CLIENT_ID_KEY, GOOGLE_USER_KEY, parseJwt, handleCredentialResponse,
+    // saveClientIdAndInitGoogle, skipLogin, signOut, updateUserUI e showLoginModal foram removidas.
 
-    // === Firebase Auth ===
-    const auth = firebase.auth();
+    // ========== OPÇÕES DE STATUS ==========
+    const STATUS_OPTIONS = [
+      'Aguardando Distribuição',
+      'Em Andamento',
+      'Aguardando Decisão',
+      'Suspenso',
+      'Sentença Proferida',
+      'Em Recurso',
+      'Trânsito em Julgado',
+      'Arquivado',
+      'Finalizado'
+    ];
 
-    function loginGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then(result => console.log("Logado como:", result.user.email))
-        .catch(error => alert("Erro ao logar: " + error.message));
+    // ========== ARMAZENAMENTO ==========
+    const DB_KEY = 'processos_juridicos';
+    const NOTES_KEY = 'anotacoes_juridicas';
+
+    function salvarProcessos(processos) {
+      localStorage.setItem(DB_KEY, JSON.stringify(processos));
     }
 
-    function logout() {
-      auth.signOut();
+    function carregarProcessos() {
+      const data = localStorage.getItem(DB_KEY);
+      return data ? JSON.parse(data) : [];
     }
 
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("formulario").style.display = "block";
+    function salvarAnotacoes(anotacoes) {
+      localStorage.setItem(NOTES_KEY, JSON.stringify(anotacoes));
+    }
+
+    function carregarAnotacoes() {
+      const data = localStorage.getItem(NOTES_KEY);
+      return data ? JSON.parse(data) : [];
+    }
+
+    // ========== CONTROLE DE PARCELAS ==========
+    document.getElementById('formaPagamento').addEventListener('change', (e) => {
+      const parcelasInput = document.getElementById('parcelasInput');
+      if (e.target.value === 'Parcelado') {
+        parcelasInput.disabled = false;
+        parcelasInput.required = true;
       } else {
-        document.getElementById("login").style.display = "block";
-        document.getElementById("formulario").style.display = "none";
+        parcelasInput.disabled = true;
+        parcelasInput.required = false;
+        parcelasInput.value = '';
       }
     });
 
-    // === Envio dos dados ===
-    form.addEventListener("submit", e => {
+    // ========== NAVEGAÇÃO ENTRE ABAS ==========
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        
+        // Atualizar botões ativos
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Mostrar aba correspondente
+        document.querySelectorAll('.tab').forEach(t => t.style.display = 'none');
+        document.getElementById(tab).style.display = 'block';
+        
+        // Atualizar título
+        const titulos = {
+          'cadastro': 'Cadastro',
+          'lista': 'Processos Registrados',
+          'anotacoes': 'Anotações',
+          'ferramentas': 'Ferramentas'
+        };
+        document.getElementById('pageTitle').textContent = titulos[tab];
+        
+        // Atualizar lista se for aba de processos
+        if (tab === 'lista') {
+          renderizarTabela();
+        }
+        
+        // Atualizar anotações
+        if (tab === 'anotacoes') {
+          atualizarSelectProcessos();
+          renderizarAnotacoes();
+        }
+      });
+    });
+
+    // ========== FORMULÁRIO DE CADASTRO ==========
+    document.getElementById('formCadastro').addEventListener('submit', (e) => {
       e.preventDefault();
+      
+      const formData = new FormData(e.target);
+      const processo = {
+        id: Date.now().toString(),
+        dataCadastro: new Date().toISOString(),
+        nome: formData.get('nome'),
+        cpf: formData.get('cpf'),
+        rg: formData.get('rg'),
+        telefone: formData.get('telefone'),
+        email: formData.get('email'),
+        responsavel: formData.get('responsavel'),
+        endereco: formData.get('endereco'),
+        categoria: formData.get('categoria'),
+        numero: formData.get('numero'),
+        vara: formData.get('vara'),
+        parte: formData.get('parte'),
+        status: formData.get('status'),
+        dataAbertura: formData.get('dataAbertura'),
+        valor: formData.get('valor'),
+        honorarios: formData.get('honorarios'),
+        formaPagamento: formData.get('formaPagamento'),
+        parcelas: formData.get('parcelas'),
+        observacoes: formData.get('observacoes')
+      };
+      
+      const processos = carregarProcessos();
+      processos.push(processo);
+      salvarProcessos(processos);
+      
+      mostrarAlerta('alertCadastro', 'Processo salvo com sucesso!', 'success');
+      e.target.reset();
+      document.getElementById('parcelasInput').disabled = true;
+      
+      setTimeout(() => {
+        document.getElementById('alertCadastro').innerHTML = '';
+      }, 3000);
+    });
+
+    // Limpar formulário
+    document.getElementById('btnLimparForm').addEventListener('click', () => {
+      document.getElementById('formCadastro').reset();
+      document.getElementById('parcelasInput').disabled = true;
+    });
+
+    // ========== EXPORTAR PDF ==========
+    document.getElementById('btnExportPdf').addEventListener('click', () => {
+      const form = document.getElementById('formCadastro');
       const formData = new FormData(form);
       
-      // 🔑 Não se esqueça do seu token de segurança aqui!
-      // DEVE SER O MESMO QUE VOCÊ DEFINIU NO SEU APPS SCRIPT!
-      formData.append("token_secreto_simples", "CHAVE_SECRETA_E_LONGA_PARA_O_APPS_SCRIPT_12345"); 
+      // Criar objeto com os dados do formulário
+      const data = {};
+      for (let [key, value] of formData.entries()) {
+        data[key] = value;
+      }
 
-      formData.append("dataEnvio", new Date().toLocaleString("pt-BR"));
+      // Formatando dados para o PDF
+      const formattedData = `
+        CLIENTE:
+        Nome Completo: ${data.nome || '-'}
+        CPF: ${data.cpf || '-'}
+        RG: ${data.rg || '-'}
+        Telefone: ${data.telefone || '-'}
+        E-mail: ${data.email || '-'}
+        Endereço: ${data.endereco || '-'}
 
-      fetch(scriptURL, { method: "POST", body: formData })
-        .then(() => {
-          alert("✅ Enviado com sucesso!");
-          form.reset();
-        })
-        .catch(() => alert("❌ Erro ao enviar! Verifique a planilha e o script."));
+        PROCESSO:
+        Responsável: ${data.responsavel || '-'}
+        Categoria: ${data.categoria || '-'}
+        Número do Processo: ${data.numero || '-'}
+        Vara / Comarca: ${data.vara || '-'}
+        Parte Contrária: ${data.parte || '-'}
+        Status: ${data.status || '-'}
+        Data de Abertura: ${data.dataAbertura ? new Date(data.dataAbertura).toLocaleDateString('pt-BR') : '-'}
+
+        FINANCEIRO:
+        Valor da Causa (R$): ${formatCurrency(data.valor)}
+        Honorários (R$): ${formatCurrency(data.honorarios)}
+        Forma de Pagamento: ${data.formaPagamento || '-'}
+        Parcelas: ${data.formaPagamento === 'Parcelado' ? (data.parcelas || 'N/A') : 'N/A'}
+
+        OBSERVAÇÕES:
+        ${data.observacoes || '(Nenhuma observação)'}
+      `;
+
+      try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(18);
+        doc.text("Resumo do Processo (Cadastro)", 10, 10);
+        
+        doc.setFontSize(12);
+        const splitText = doc.splitTextToSize(formattedData, 180);
+        doc.text(splitText, 10, 20);
+
+        doc.save(`processo_${data.nome.replace(/\s/g, '_') || 'novo'}.pdf`);
+        mostrarAlerta('alertCadastro', 'PDF exportado com sucesso!', 'success');
+      } catch (error) {
+        console.error("Erro ao exportar PDF:", error);
+        mostrarAlerta('alertCadastro', 'Erro ao exportar PDF. Verifique se a biblioteca jsPDF foi carregada corretamente.', 'error');
+      }
+      
+      setTimeout(() => {
+        document.getElementById('alertCadastro').innerHTML = '';
+      }, 3000);
+    });
+
+    // Função auxiliar para formatação de moeda
+    function formatCurrency(value) {
+      const num = parseFloat(value);
+      return isNaN(num) ? 'R$ 0,00' : num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    // Função auxiliar para mostrar alertas
+    function mostrarAlerta(containerId, message, type) {
+      document.getElementById(containerId).innerHTML = `
+        <div class="alert ${type}">
+          ${message}
+        </div>
+      `;
+    }
+
+    // ========== LISTA DE PROCESSOS ==========
+
+    // Renderiza a tabela de processos
+    function renderizarTabela(processos = carregarProcessos()) {
+      const tableWrapper = document.getElementById('tableWrapper');
+      
+      if (processos.length === 0) {
+        tableWrapper.innerHTML = `<div class="no-data">Nenhum processo registrado ainda.</div>`;
+        return;
+      }
+
+      let tableHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Processo</th>
+              <th>Status</th>
+              <th>Abertura</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      processos.forEach(p => {
+        const dataAberturaFormatada = p.dataAbertura ? new Date(p.dataAbertura).toLocaleDateString('pt-BR') : '-';
+        const statusClass = 'status-' + p.status.toLowerCase().replace(/\s/g, '').replace(/[^\w\s]/gi, ''); // Ex: Aguardando Distribuição -> status-aguardandodistribuicao
+        
+        tableHTML += `
+          <tr data-id="${p.id}">
+            <td>
+              <strong>${p.nome}</strong><br>
+              <span style="font-size:12px;color:var(--muted)">${p.categoria || 'N/A'}</span>
+            </td>
+            <td>${p.numero || 'N/A'}</td>
+            <td><span class="status-badge ${statusClass}">${p.status}</span></td>
+            <td>${dataAberturaFormatada}</td>
+            <td style="white-space:nowrap;">
+              <select class="status-changer" data-id="${p.id}" onchange="atualizarStatus(this.dataset.id, this.value)">
+                <option value="">Mudar Status</option>
+                ${STATUS_OPTIONS.map(status => `<option value="${status}">${status}</option>`).join('')}
+              </select>
+              <button class="btn danger" onclick="deletarProcesso('${p.id}')">Excluir</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      tableHTML += `
+          </tbody>
+        </table>
+      `;
+
+      tableWrapper.innerHTML = tableHTML;
+      
+      // Define o status atual na combobox
+      processos.forEach(p => {
+        const select = document.querySelector(`.status-changer[data-id="${p.id}"]`);
+        if (select) {
+          select.value = p.status;
+        }
+      });
+    }
+    
+    // Atualiza o status de um processo
+    function atualizarStatus(id, novoStatus) {
+      if (novoStatus === "") return;
+      
+      let processos = carregarProcessos();
+      const index = processos.findIndex(p => p.id === id);
+      
+      if (index !== -1) {
+        processos[index].status = novoStatus;
+        salvarProcessos(processos);
+        renderizarTabela(processos); // Re-renderizar para atualizar o badge
+        
+        mostrarAlerta('alertCadastro', `Status do processo de ${processos[index].nome} atualizado para ${novoStatus}.`, 'success');
+        setTimeout(() => {
+          document.getElementById('alertCadastro').innerHTML = '';
+        }, 3000);
+      }
+    }
+
+    // Deleta um processo
+    function deletarProcesso(id) {
+      if (confirm('Tem certeza que deseja excluir este processo? Esta ação não pode ser desfeita.')) {
+        let processos = carregarProcessos().filter(p => p.id !== id);
+        salvarProcessos(processos);
+        
+        // Excluir anotações relacionadas
+        let anotacoes = carregarAnotacoes().filter(a => a.processoId !== id);
+        salvarAnotacoes(anotacoes);
+
+        renderizarTabela(processos);
+        
+        mostrarAlerta('alertCadastro', 'Processo e anotações relacionadas excluídos com sucesso!', 'success');
+        setTimeout(() => {
+          document.getElementById('alertCadastro').innerHTML = '';
+        }, 3000);
+      }
+    }
+
+    // Pesquisa na tabela
+    document.getElementById('searchInput').addEventListener('keyup', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const processos = carregarProcessos();
+      
+      const filteredProcessos = processos.filter(p => 
+        p.nome.toLowerCase().includes(searchTerm) ||
+        p.numero.toLowerCase().includes(searchTerm) ||
+        p.categoria.toLowerCase().includes(searchTerm) ||
+        p.status.toLowerCase().includes(searchTerm)
+      );
+      
+      renderizarTabela(filteredProcessos);
+    });
+    
+    // Botão de Refresh
+    document.getElementById('btnRefresh').addEventListener('click', () => {
+        document.getElementById('searchInput').value = ''; // Limpa a pesquisa
+        renderizarTabela();
+    });
+
+    // Ordenação por Data
+    document.getElementById('btnSortDate').addEventListener('click', () => {
+        const processos = carregarProcessos();
+        
+        processos.sort((a, b) => {
+            const dateA = new Date(a.dataAbertura || a.dataCadastro).getTime();
+            const dateB = new Date(b.dataAbertura || b.dataCadastro).getTime();
+            return dateB - dateA; // Mais recente primeiro
+        });
+        
+        renderizarTabela(processos);
+        mostrarAlerta('alertCadastro', 'Processos ordenados por data de abertura/cadastro (mais recente primeiro).', 'success');
+        setTimeout(() => {
+          document.getElementById('alertCadastro').innerHTML = '';
+        }, 3000);
+    });
+
+    // Download CSV
+    document.getElementById('btnDownloadCsv').addEventListener('click', () => {
+        const processos = carregarProcessos();
+        if (processos.length === 0) {
+            alert("Não há dados para exportar.");
+            return;
+        }
+
+        const headers = [
+            "ID", "Data Cadastro", "Nome", "CPF", "RG", "Telefone", "Email", "Responsavel", "Endereco",
+            "Categoria", "Numero", "Vara", "Parte Contraria", "Status", "Data Abertura",
+            "Valor da Causa", "Honorarios", "Forma Pagamento", "Parcelas", "Observacoes"
+        ];
+
+        const csvRows = [];
+        csvRows.push(headers.join(';')); // Adiciona cabeçalho
+
+        processos.forEach(p => {
+            const values = [
+                p.id, p.dataCadastro, p.nome, p.cpf, p.rg, p.telefone, p.email, p.responsavel, p.endereco,
+                p.categoria, p.numero, p.vara, p.parte, p.status, p.dataAbertura,
+                p.valor, p.honorarios, p.formaPagamento, p.parcelas, `"${p.observacoes.replace(/"/g, '""').replace(/\n/g, ' ')}"` // Sanitize observations
+            ];
+            csvRows.push(values.join(';'));
+        });
+
+        const csvString = csvRows.join('\n');
+        const blob = new Blob(["\uFEFF" + csvString], { type: 'text/csv;charset=utf-8;' }); // Adiciona BOM para caracteres especiais
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "processos_juridicos.csv";
+        link.click();
+        
+        mostrarAlerta('alertCadastro', 'Dados exportados para CSV com sucesso!', 'success');
+        setTimeout(() => {
+          document.getElementById('alertCadastro').innerHTML = '';
+        }, 3000);
+    });
+
+    // Garante que a tabela é carregada ao abrir a lista (será feito no nav-btn, mas útil para o load inicial)
+    // window.addEventListener('load', renderizarTabela); 
+
+
+    // ========== ANOTAÇÕES ==========
+
+    // Preenche o select de processos para a aba de anotações
+    function atualizarSelectProcessos() {
+      const select = document.getElementById('selectProcesso');
+      select.innerHTML = '<option value="">--- selecione um processo ---</option>';
+      
+      const processos = carregarProcessos();
+      processos.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p.id;
+        option.textContent = `${p.nome} - ${p.numero || 'S/N'}`;
+        select.appendChild(option);
+      });
+      
+      select.value = ''; // Reset
+      document.getElementById('listaAnotacoes').innerHTML = '';
+    }
+
+    // Renderiza a lista de anotações do processo selecionado
+    document.getElementById('selectProcesso').addEventListener('change', renderizarAnotacoes);
+
+    function renderizarAnotacoes() {
+      const select = document.getElementById('selectProcesso');
+      const processoId = select.value;
+      const listaAnotacoesDiv = document.getElementById('listaAnotacoes');
+      
+      if (!processoId) {
+        listaAnotacoesDiv.innerHTML = `<div class="no-data">Selecione um processo para ver/adicionar anotações.</div>`;
+        return;
+      }
+
+      const todasAnotacoes = carregarAnotacoes();
+      const anotacoesDoProcesso = todasAnotacoes.filter(a => a.processoId === processoId).reverse();
+      
+      if (anotacoesDoProcesso.length === 0) {
+        listaAnotacoesDiv.innerHTML = `<div class="no-data">Nenhuma anotação para este processo.</div>`;
+        return;
+      }
+      
+      let html = '';
+      anotacoesDoProcesso.forEach(a => {
+        const dataFormatada = new Date(a.data).toLocaleString('pt-BR');
+        html += `
+          <div class="note-card">
+            <div class="note-meta">
+              ${dataFormatada}
+              <button class="btn link" onclick="deletarAnotacao('${a.id}')" style="float:right;padding:0;">Excluir</button>
+            </div>
+            <div class="note-text">${a.texto}</div>
+          </div>
+        `;
+      });
+
+      listaAnotacoesDiv.innerHTML = html;
+    }
+
+    // Salvar Anotação
+    document.getElementById('btnSalvarAnotacao').addEventListener('click', () => {
+      const select = document.getElementById('selectProcesso');
+      const input = document.getElementById('inputAnotacao');
+      const processoId = select.value;
+      const texto = input.value.trim();
+      
+      if (!processoId) {
+        mostrarAlerta('alertAnotacoes', 'Selecione um processo para adicionar a anotação.', 'error');
+        return;
+      }
+      
+      if (!texto) {
+        mostrarAlerta('alertAnotacoes', 'Digite o texto da anotação.', 'error');
+        return;
+      }
+      
+      const novaAnotacao = {
+        id: Date.now().toString(),
+        processoId: processoId,
+        data: new Date().toISOString(),
+        texto: texto
+      };
+      
+      const anotacoes = carregarAnotacoes();
+      anotacoes.push(novaAnotacao);
+      salvarAnotacoes(anotacoes);
+      
+      input.value = ''; // Limpa o campo
+      renderizarAnotacoes();
+      
+      mostrarAlerta('alertAnotacoes', 'Anotação salva com sucesso!', 'success');
+      setTimeout(() => {
+        document.getElementById('alertAnotacoes').innerHTML = '';
+      }, 3000);
+    });
+
+    // Deletar Anotação
+    function deletarAnotacao(id) {
+      if (confirm('Tem certeza que deseja excluir esta anotação?')) {
+        let anotacoes = carregarAnotacoes().filter(a => a.id !== id);
+        salvarAnotacoes(anotacoes);
+        renderizarAnotacoes();
+        
+        mostrarAlerta('alertAnotacoes', 'Anotação excluída com sucesso!', 'success');
+        setTimeout(() => {
+          document.getElementById('alertAnotacoes').innerHTML = '';
+        }, 3000);
+      }
+    }
+
+
+    // ========== FERRAMENTAS - CALCULADORA DE PRAZOS ==========
+    
+    // Função para verificar se um dia é útil (apenas sábado/domingo)
+    function isDiaUtil(date) {
+        const dayOfWeek = date.getDay(); // 0 = Domingo, 6 = Sábado
+        return dayOfWeek !== 0 && dayOfWeek !== 6;
+    }
+
+    // Função principal de cálculo
+    document.getElementById('btnCalcularPrazo').addEventListener('click', () => {
+        const dataInicialStr = document.getElementById('dataInicial').value;
+        const tipoPrazo = document.getElementById('tipoPrazo').value;
+        const quantidadeDias = parseInt(document.getElementById('quantidadeDias').value);
+
+        const resultadoDiv = document.getElementById('resultadoPrazo');
+        const resultadoTexto = document.getElementById('resultadoTexto');
+        
+        resultadoDiv.style.display = 'none';
+
+        if (!dataInicialStr || isNaN(quantidadeDias) || quantidadeDias <= 0) {
+            resultadoTexto.innerHTML = `<span style="color:var(--danger)">Por favor, preencha a Data Inicial e uma Quantidade de Dias válida.</span>`;
+            resultadoDiv.style.display = 'block';
+            resultadoDiv.style.border = '2px solid var(--danger)';
+            return;
+        }
+        
+        resultadoDiv.style.border = '2px solid var(--primary)';
+        
+        // Data de Início do Prazo (Dia seguinte)
+        const dataInicial = new Date(dataInicialStr);
+        dataInicial.setDate(dataInicial.getDate() + 1); // Começa a contar no dia seguinte
+
+        let dataAtual = new Date(dataInicial.getTime());
+        let diasContados = 0;
+        let dataFinal = null;
+
+        while (diasContados < quantidadeDias) {
+            if (tipoPrazo === 'corrido') {
+                diasContados++;
+                dataFinal = new Date(dataAtual.getTime()); // Atualiza a data final em cada passo
+            } else if (tipoPrazo === 'uteis') {
+                if (isDiaUtil(dataAtual)) {
+                    diasContados++;
+                }
+                dataFinal = new Date(dataAtual.getTime()); // Atualiza a data final em cada passo
+            }
+            
+            // Avança para o próximo dia
+            if (diasContados < quantidadeDias) {
+                dataAtual.setDate(dataAtual.getDate() + 1);
+            } else {
+                // Se chegou ao último dia, verifica se ele é útil se o prazo for útil
+                if (tipoPrazo === 'uteis') {
+                    // O prazo útil finaliza no último dia útil contado
+                } else {
+                    // Prazo corrido finaliza na última data contada
+                }
+                break;
+            }
+        }
+        
+        if (dataFinal) {
+            // Se o último dia do prazo não for útil, prorroga para o próximo dia útil
+            if (tipoPrazo === 'uteis') {
+                while (!isDiaUtil(dataFinal)) {
+                    dataFinal.setDate(dataFinal.getDate() + 1);
+                }
+            }
+            
+            resultadoTexto.innerHTML = `O prazo de **${quantidadeDias} dias ${tipoPrazo === 'uteis' ? 'úteis' : 'corridos'}** termina em: **${dataFinal.toLocaleDateString('pt-BR')}**`;
+        } else {
+            resultadoTexto.innerHTML = "Erro no cálculo. Verifique os valores.";
+        }
+
+        resultadoDiv.style.display = 'block';
+    });
+
+
+    // ========== FERRAMENTAS - GERENCIAR DADOS ==========
+
+    // Limpar Todos os Dados
+    document.getElementById('btnLimparTodos').addEventListener('click', () => {
+        if (confirm('ATENÇÃO: Você tem certeza que deseja APAGAR TODOS os processos e anotações? Esta ação é irreversível.')) {
+            localStorage.removeItem(DB_KEY);
+            localStorage.removeItem(NOTES_KEY);
+            
+            // Recarrega as listas
+            if (document.getElementById('lista').style.display !== 'none') {
+                renderizarTabela();
+            }
+            if (document.getElementById('anotacoes').style.display !== 'none') {
+                atualizarSelectProcessos();
+                renderizarAnotacoes();
+            }
+            
+            mostrarAlerta('alertCadastro', 'Todos os dados foram excluídos com sucesso!', 'success');
+            setTimeout(() => {
+              document.getElementById('alertCadastro').innerHTML = '';
+            }, 5000);
+        }
+    });
+
+    // ========== INITIAL LOAD ==========
+    // Garante que o modo de visualização inicial esteja correto
+    window.addEventListener('load', () => {
+        // Inicializa o modo local, sem a necessidade de checar login
+        document.getElementById('parcelasInput').disabled = true;
+        renderizarTabela(carregarProcessos()); // Carrega a lista inicial (na aba Processos, se o usuário navegar até lá)
     });
   </script>
-
 </body>
 </html>
