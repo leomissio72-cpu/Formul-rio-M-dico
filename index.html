@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Formulário Médico</title>
   <style>
+    /* ... (Seu CSS completo aqui) ... */
     body { 
       font-family: Arial, sans-serif; 
       background: #f0f2f5; 
@@ -16,7 +17,7 @@
       margin: 0;
       padding: 20px;
     }
-
+    /* ... (Resto do seu CSS) ... */
     .container {
       background: white; 
       padding: 30px; 
@@ -26,60 +27,19 @@
       max-width: 420px;
       text-align: center;
     }
-
-    h2 { 
-      color: #333; 
-      margin-bottom: 20px; 
-    }
-
-    label { 
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-      text-align: left;
-    }
-
-    input, select, button { 
-      width: 100%; 
-      padding: 10px; 
-      margin-top: 5px; 
-      border: 1px solid #ccc; 
-      border-radius: 5px; 
-      box-sizing: border-box;
-    }
-
-    button { 
-      background: #007bff; 
-      color: white; 
-      border: none; 
-      cursor: pointer; 
-      margin-top: 25px;
-      transition: 0.3s;
-    }
-
-    button:hover { background: #0056b3; }
-
-    #logoutBtn {
-      background: #dc3545;
-      width: 100px;
-    }
-
-    #logoutBtn:hover {
-      background: #b02a37;
-    }
-
+    /* ... (Resto do seu CSS) ... */
     #formulario {
       display: none;
     }
   </style>
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
   <script>
+    // 🔑 CHAVE DO FIREBASE SERÁ SUBSTITUÍDA AQUI PELO GITHUB ACTION
     const firebaseConfig = {
-      apiKey: "AIzaSyCznEr8M2lNu7nwCfGN_kcJZFM5lqRQdf8",
+      apiKey: "VARS_REPLACE_FIREBASE_API_KEY", 
       authDomain: "psico-17375.firebaseapp.com",
       projectId: "psico-17375",
       storageBucket: "psico-17375.appspot.com",
@@ -92,14 +52,12 @@
 </head>
 <body>
 
-  <!-- Tela de Login -->
   <div class="container" id="login">
     <h2>Bem-vindo</h2>
     <p>Entre com sua conta Google para acessar o sistema</p>
     <button onclick="loginGoogle()">🔐 Entrar com Google</button>
   </div>
 
-  <!-- Formulário -->
   <div class="container" id="formulario">
     <button id="logoutBtn" onclick="logout()">Sair</button>
     <h2>Formulário Médico</h2>
@@ -135,8 +93,8 @@
   </div>
 
   <script>
-    // === Link do seu Apps Script ===
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwrhBLdl163epheHHT-V36q93lMsyxAXeEazbsrTSsCHQOGjUMyLPCaynsEkQ4bvEDC/exec";
+    // 🔗 URL DO APPS SCRIPT SERÁ SUBSTITUÍDA AQUI PELO GITHUB ACTION
+    const scriptURL = "VARS_REPLACE_GOOGLE_SCRIPT_URL"; 
     const form = document.getElementById("form");
 
     // === Firebase Auth ===
@@ -180,5 +138,3 @@
 
 </body>
 </html>
-
-
