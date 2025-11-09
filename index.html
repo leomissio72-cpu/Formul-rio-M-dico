@@ -94,6 +94,7 @@
 
   <script>
     // 🔗 URL DO APPS SCRIPT SERÁ SUBSTITUÍDA AQUI PELO GITHUB ACTION
+    // ESTE É O NOVO PLACEHOLDER PARA A SUA NOVA URL:
     const scriptURL = "VARS_REPLACE_GOOGLE_SCRIPT_URL"; 
     const form = document.getElementById("form");
 
@@ -125,6 +126,11 @@
     form.addEventListener("submit", e => {
       e.preventDefault();
       const formData = new FormData(form);
+      
+      // 🔑 Não se esqueça do seu token de segurança aqui!
+      // DEVE SER O MESMO QUE VOCÊ DEFINIU NO SEU APPS SCRIPT!
+      formData.append("token_secreto_simples", "CHAVE_SECRETA_E_LONGA_PARA_O_APPS_SCRIPT_12345"); 
+
       formData.append("dataEnvio", new Date().toLocaleString("pt-BR"));
 
       fetch(scriptURL, { method: "POST", body: formData })
