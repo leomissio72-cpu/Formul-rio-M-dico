@@ -124,7 +124,7 @@
   <script>
     // === Firebase Config ===
     const firebaseConfig = {
-      apiKey: "SUA_FIREBASE_API_KEY_AQUI", // Substitua pela sua chave real
+      apiKey: "COLE_AQUI_A_SUA_FIREBASE_API_KEY_REAL", // Substitua pela sua chave real
       authDomain: "psico-17375.firebaseapp.com",
       projectId: "psico-17375",
       storageBucket: "psico-17375.appspot.com",
@@ -160,25 +160,26 @@
       }
     });
 
-    // === Envio dos dados via back-end seguro ===
+    // === Envio dos dados direto para Apps Script ===
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwI_K-aZl_g3i09Dtzd_4cr0H-Q_UG083qSBeom_D60uFQGt2eBbRqCuPzdjKDnjgEE/exec";
+
     form.addEventListener("submit", e => {
       e.preventDefault();
       const formData = new FormData(form);
       formData.append("dataEnvio", new Date().toLocaleString("pt-BR"));
 
-      fetch("/submit", { method: "POST", body: formData })
+      fetch(scriptURL, { method: "POST", body: formData })
         .then(res => res.json())
         .then(data => {
-          if (data.success) {
+          if(data.success){
             alert("✅ Enviado com sucesso!");
             form.reset();
           } else {
-            alert("❌ Erro ao enviar! " + (data.message || ""));
+            alert("❌ Erro ao enviar: " + (data.message || ""));
           }
         })
-        .catch(err => alert("❌ Erro ao enviar! " + err.message));
+        .catch(err => alert("❌ Erro ao enviar: " + err.message));
     });
   </script>
 </body>
 </html>
-
