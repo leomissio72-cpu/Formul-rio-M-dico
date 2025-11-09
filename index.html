@@ -76,19 +76,6 @@
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "FIREBASE_API_KEY",
-      authDomain: "psico-17375.firebaseapp.com",
-      projectId: "psico-17375",
-      storageBucket: "psico-17375.appspot.com",
-      messagingSenderId: "405718265829",
-      appId: "1:405718265829:web:3e3974a0dc02080824890c",
-      measurementId: "G-P19R4LJJKS"
-    };
-    firebase.initializeApp(firebaseConfig);
-  </script>
 </head>
 <body>
 
@@ -135,12 +122,22 @@
   </div>
 
   <script>
-    // === Link do seu Apps Script ===
-    const scriptURL = "GOOGLE_SCRIPT_URL";
-    const form = document.getElementById("form");
+    // === Firebase Config (aqui você ainda precisa da API key no front-end) ===
+    const firebaseConfig = {
+      apiKey: "SUA_FIREBASE_API_KEY", // necessário no front-end
+      authDomain: "psico-17375.firebaseapp.com",
+      projectId: "psico-17375",
+      storageBucket: "psico-17375.appspot.com",
+      messagingSenderId: "405718265829",
+      appId: "1:405718265829:web:3e3974a0dc02080824890c",
+      measurementId: "G-P19R4LJJKS"
+    };
+    firebase.initializeApp(firebaseConfig);
 
-    // === Firebase Auth ===
     const auth = firebase.auth();
+    const loginDiv = document.getElementById("login");
+    const formDiv = document.getElementById("formulario");
+    const form = document.getElementById("form");
 
     function loginGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider();
@@ -155,29 +152,32 @@
 
     auth.onAuthStateChanged(user => {
       if (user) {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("formulario").style.display = "block";
+        loginDiv.style.display = "none";
+        formDiv.style.display = "block";
       } else {
-        document.getElementById("login").style.display = "block";
-        document.getElementById("formulario").style.display = "none";
+        loginDiv.style.display = "block";
+        formDiv.style.display = "none";
       }
     });
 
-    // === Envio dos dados ===
+    // === Envio dos dados via back-end seguro ===
     form.addEventListener("submit", e => {
       e.preventDefault();
       const formData = new FormData(form);
       formData.append("dataEnvio", new Date().toLocaleString("pt-BR"));
 
-      fetch(scriptURL, { method: "POST", body: formData })
-        .then(() => {
-          alert("✅ Enviado com sucesso!");
-          form.reset();
+      fetch("/submit", { method: "POST", body: formData })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert("✅ Enviado com sucesso!");
+            form.reset();
+          } else {
+            alert("❌ Erro ao enviar! " + (data.message || ""));
+          }
         })
-        .catch(() => alert("❌ Erro ao enviar! Verifique a planilha e o script."));
+        .catch(err => alert("❌ Erro ao enviar! " + err.message));
     });
   </script>
-
 </body>
 </html>
-
