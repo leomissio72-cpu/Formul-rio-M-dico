@@ -1,183 +1,36 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Formulário Médico</title>
-  <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      background: #f0f2f5; 
-      display: flex;
-      flex-direction: column;
-      align-items: center; 
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
-    }
-
-    .container {
-      background: white; 
-      padding: 30px; 
-      border-radius: 12px; 
-      box-shadow: 0 0 12px rgba(0,0,0,0.1); 
-      width: 100%;
-      max-width: 420px;
-      text-align: center;
-    }
-
-    h2 { 
-      color: #333; 
-      margin-bottom: 20px; 
-    }
-
-    label { 
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-      text-align: left;
-    }
-
-    input, select, button { 
-      width: 100%; 
-      padding: 10px; 
-      margin-top: 5px; 
-      border: 1px solid #ccc; 
-      border-radius: 5px; 
-      box-sizing: border-box;
-    }
-
-    button { 
-      background: #007bff; 
-      color: white; 
-      border: none; 
-      cursor: pointer; 
-      margin-top: 25px;
-      transition: 0.3s;
-    }
-
-    button:hover { background: #0056b3; }
-
-    #logoutBtn {
-      background: #dc3545;
-      width: 100px;
-    }
-
-    #logoutBtn:hover {
-      background: #b02a37;
-    }
-
-    #formulario {
-      display: none;
-    }
-  </style>
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCznEr8M2lNu7nwCfGN_kcJZFM5lqRQdf8",
-      authDomain: "psico-17375.firebaseapp.com",
-      projectId: "psico-17375",
-      storageBucket: "psico-17375.appspot.com",
-      messagingSenderId: "405718265829",
-      appId: "1:405718265829:web:3e3974a0dc02080824890c",
-      measurementId: "G-P19R4LJJKS"
-    };
-    firebase.initializeApp(firebaseConfig);
-  </script>
-</head>
-<body>
-
-  <!-- Tela de Login -->
-  <div class="container" id="login">
-    <h2>Bem-vindo</h2>
-    <p>Entre com sua conta Google para acessar o sistema</p>
-    <button onclick="loginGoogle()">🔐 Entrar com Google</button>
-  </div>
-
-  <!-- Formulário -->
-  <div class="container" id="formulario">
-    <button id="logoutBtn" onclick="logout()">Sair</button>
-    <h2>Formulário Médico</h2>
-
-    <form id="form">
-      <label>Nome do Médico:</label>
-      <input type="text" name="nomeMedico" required>
-
-      <label>Nome do Paciente:</label>
-      <input type="text" name="nomePaciente" required>
-
-      <label>CPF do Paciente:</label>
-      <input type="text" name="cpfPaciente" required>
-
-      <label>Data de Nascimento:</label>
-      <input type="date" name="dataNascimento" required>
-
-      <label>Data da Alta:</label>
-      <input type="date" name="dataAlta" required>
-
-      <label>Especialidade Encaminhada:</label>
-      <select name="especialidade" required>
-        <option value="">Selecione</option>
-        <option>Mastologia</option>
-        <option>OCR</option>
-      </select>
-
-      <label>Retorno Programado (em meses):</label>
-      <input type="number" name="retornoMeses" min="0" required>
-
-      <button type="submit">Enviar</button>
-    </form>
-  </div>
-
-  <script>
-    // === Link do seu Apps Script ===
-    const scriptURL = "https://script.google.com/macros/s/AKfycbw0APOkBs0jV6fT0FYPY94TrwDUb2vrn94U58Zayweooo-gChpVDy30uKussvZRdUtE/exec";
-    const form = document.getElementById("form");
-
-    // === Firebase Auth ===
-    const auth = firebase.auth();
-
-    function loginGoogle() {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
-        .then(result => console.log("Logado como:", result.user.email))
-        .catch(error => alert("Erro ao logar: " + error.message));
-    }
-
-    function logout() {
-      auth.signOut();
-    }
-
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("formulario").style.display = "block";
-      } else {
-        document.getElementById("login").style.display = "block";
-        document.getElementById("formulario").style.display = "none";
-      }
-    });
-
-    // === Envio dos dados ===
+// === Envio dos dados (Código OTIMIZADO) ===
     form.addEventListener("submit", e => {
       e.preventDefault();
+      
+      const submitButton = e.submitter; // Pega o botão de envio
+      submitButton.disabled = true; // Desabilita para evitar cliques duplos
+      submitButton.textContent = "Aguarde...";
+
       const formData = new FormData(form);
-      formData.append("dataEnvio", new Date().toLocaleString("pt-BR"));
+      formData.append("dataEnvio", new Date().toLocaleString("pt-BR")); // Adiciona a data de envio
 
       fetch(scriptURL, { method: "POST", body: formData })
-        .then(() => {
-          alert("✅ Enviado com sucesso!");
-          form.reset();
+        .then(response => {
+            if (!response.ok) {
+                // Se a resposta HTTP for um erro (ex: 500), lança um erro
+                throw new Error(`Erro HTTP: ${response.status}`);
+            }
+            return response.text(); // Lê a resposta como texto
         })
-        .catch(() => alert("❌ Erro ao enviar! Verifique a planilha e o script."));
+        .then(responseText => {
+            if (responseText === "OK") {
+                alert("✅ Enviado com sucesso!");
+                form.reset();
+            } else {
+                // Captura a mensagem de erro do Apps Script (ex: "Erro: Permissão negada")
+                alert(`❌ Erro no Script: ${responseText}`);
+            }
+        })
+        .catch(error => {
+            alert(`❌ Falha de Envio: ${error.message}. Verifique o URL do Script e a Planilha.`);
+        })
+        .finally(() => {
+            submitButton.disabled = false; // Reabilita o botão
+            submitButton.textContent = "Enviar";
+        });
     });
-  </script>
-
-</body>
-</html>
-
